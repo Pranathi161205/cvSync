@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CVSync - AI Resume Analyzer</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, #dbeafe, transparent 35%),
+        linear-gradient(135deg, #f8fafc, #eef2ff);
+      color: #0f172a;
+    }
+
+    .navbar {
+      padding: 24px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      color: #2563eb;
+    }
+
+    .badge {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 35px 8% 20px;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      line-height: 1.1;
+      margin-bottom: 15px;
+    }
+
+    .hero h1 span {
+      color: #2563eb;
+    }
+
+    .hero p {
+      color: #475569;
+      font-size: 18px;
+      max-width: 720px;
+      margin: auto;
+    }
+
+    .main {
+      width: 90%;
+      max-width: 1150px;
+      margin: 35px auto 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 25px;
+    }
+
+    label {
+      font-weight: 700;
+      margin-top: 20px;
+      display: block;
+    }
+
+    .upload-box {
+      margin-top: 10px;
+      border: 2px dashed #93c5fd;
+      border-radius: 22px;
+      padding: 30px;
+      text-align: center;
+      background: #f8fbff;
+    }
+
+    input[type="file"] {
+      margin-top: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 190px;
+      margin-top: 10px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid #cbd5e1;
+      resize: vertical;
+      font-size: 15px;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px #dbeafe;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 16px;
+      border: none;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.3);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 16px;
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    .score-box {
+      text-align: center;
+      padding: 25px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+      margin-bottom: 22px;
+    }
+
+    .score {
+      font-size: 58px;
+      font-weight: 900;
+      color: #2563eb;
+    }
+
+    .source {
+      display: inline-block;
+      margin-top: 8px;
+      background: #dcfce7;
+      color: #166534;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section h3 {
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .missing-chip {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .suggestion {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 13px 15px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      color: #334155;
+      font-size: 15px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      padding: 70px 20px;
+    }
+
+    .empty-state h2 {
+      color: #0f172a;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      padding-bottom: 25px;
+    }
+
+    @media (max-width: 850px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 38px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">CVSync</div>
+    <div class="badge">AI Resume Analyzer</div>
+  </nav>
+
+  <section class="hero">
+    <h1>Optimize your resume with <span>AI-powered ATS insights</span></h1>
+    <p>
+      Upload your resume, paste a job description, and get instant skill matching,
+      ATS score, and smart improvement suggestions.
+    </p>
+  </section>
+
+  <main class="main">
+    <section class="card">
+      <h2>Analyze Resume</h2>
+
+      <form id="resumeForm">
+        <label>Upload Resume PDF</label>
+        <div class="upload-box">
+          <p><strong>Drop or choose your resume</strong></p>
+          <p style="color:#64748b;">PDF only</p>
+          <input type="file" id="resume" accept="application/pdf" required />
+        </div>
+
+        <label>Job Description</label>
+        <textarea
+          id="jobDescription"
+          placeholder="Paste the job description here..."
+          required
+        ></textarea>
+
+        <button id="analyzeBtn" type="submit">Analyze Resume</button>
+        <p id="loading" class="loading">Analyzing your resume... please wait</p>
+      </form>
+    </section>
+
+    <section class="card" id="resultCard">
+      <div id="emptyState" class="empty-state">
+        <h2>Your analysis will appear here</h2>
+        <p>Upload a resume and enter a job description to begin.</p>
+      </div>
+
+      <div id="result" style="display:none;">
+        <div class="score-box">
+          <p>ATS Score</p>
+          <div class="score"><span id="score">0</span>%</div>
+          <span class="source" id="source">AI</span>
+        </div>
+
+        <div class="section">
+          <h3>Matched Skills</h3>
+          <div id="matched" class="chips"></div>
+        </div>
+
+        <div class="section">
+          <h3>Missing Skills</h3>
+          <div id="missing" class="chips"></div>
+        </div>
+
+        <div class="section">
+          <h3>Suggestions</h3>
+          <div id="suggestions"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="footer-note">Built with FastAPI, MongoDB Atlas, Gemini AI, and Hugging Face fallback.</p>
+
+  <script>
+    document.getElementById("resumeForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const button = document.getElementById("analyzeBtn");
+      const loading = document.getElementById("loading");
+
+      button.disabled = true;
+      button.innerText = "Analyzing...";
+      loading.style.display = "block";
+
+      const resume = document.getElementById("resume").files[0];
+      const jobDescription = document.getElementById("jobDescription").value;
+
+      const formData = new FormData();
+      formData.append("resume", resume);
+      formData.append("job_description", jobDescription);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        document.getElementById("emptyState").style.display = "none";
+        document.getElementById("result").style.display = "block";
+
+        document.getElementById("score").innerText = data.ats_score || 0;
+        document.getElementById("source").innerText = data.source || "AI Analysis";
+
+        showChips("matched", data.matched_skills || [], "chip");
+        showChips("missing", data.missing_skills || [], "chip missing-chip");
+        showSuggestions(data.suggestions || []);
+
+      } catch (error) {
+        alert("Something went wrong. Make sure backend is running.");
+        console.error(error);
+      }
+
+      button.disabled = false;
+      button.innerText = "Analyze Resume";
+      loading.style.display = "none";
+    });
+
+    function showChips(id, items, className) {
+      const box = document.getElementById(id);
+      box.innerHTML = "";
+
+      if (items.length === 0) {
+        const span = document.createElement("span");
+        span.className = className;
+        span.innerText = "None";
+        box.appendChild(span);
+        return;
+      }
+
+      items.forEach(item => {
+        const span = document.createElement("span");
+        span.className = className;
+        span.innerText = item;
+        box.appendChild(span);
+      });
+    }
+
+    function showSuggestions(items) {
+      const box = document.getElementById("suggestions");
+      box.innerHTML = "";
+
+      if (items.length === 0) {
+        const div = document.createElement("div");
+        div.className = "suggestion";
+        div.innerText = "No suggestions available.";
+        box.appendChild(div);
+        return;
+      }
+
+      items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "suggestion";
+        div.innerText = item;
+        box.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

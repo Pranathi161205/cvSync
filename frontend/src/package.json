@@ -1,0 +1,9 @@
+﻿{
+  "name": "cvsync",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CVSync frontend",
+  "scripts": {
+    "start": "echo \"No frontend scripts defined yet.\" && exit 0"
+  }
+}
