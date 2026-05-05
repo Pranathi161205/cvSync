@@ -332,12 +332,13 @@
       formData.append("job_description", jobDescription);
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/analyze", {
+        const response = await fetch("https://cvsync-backend.onrender.com/analyze", {
           method: "POST",
           body: formData
         });
 
         const data = await response.json();
+        console.log("Backend response:", data);
 
         document.getElementById("emptyState").style.display = "none";
         document.getElementById("result").style.display = "block";
