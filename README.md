@@ -67,3 +67,41 @@ CVSync/
 ├── main.py
 ├── requirements.txt
 └── README.md
+
+**Key Functionalities**
+Resume Analysis
+Analyzes uploaded resumes against job descriptions using AI models
+
+ATS Score Generation
+Generates ATS compatibility scores based on resume content and keywords
+
+Skill Matching
+Identifies matched and missing skills from the job description
+
+AI Suggestions
+Provides personalized recommendations to improve resume quality
+
+Database Integration
+Stores analysis results securely using MongoDB
+
+**Project Goals**
+Simplify resume analysis for job seekers
+Improve ATS compatibility of resumes
+Provide AI-powered resume feedback
+Automate skill and keyword analysis
+Enhance recruitment preparation process
+
+**Future Enhancements**
+User authentication system
+Resume template recommendations
+Multi-language resume support
+Advanced analytics dashboard
+Cloud deployment
+Downloadable analysis reports
+
+**Author**
+Pranathi161205
+GitHub: https://github.com/Pranathi161205
+
+**Repository Link**
+https://github.com/Pranathi161205/ai-resume-analyzer
